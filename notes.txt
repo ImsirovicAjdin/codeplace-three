@@ -664,6 +664,61 @@ git commit -m "Create a new test project"
 #############
 14
 DYNAMIC CAROUSEL
+Step 1
+Now that we have a project, we can start creating a truly dynamic carousel.
+Let's start by passing the "projects" variable to the carousel partial, which is going to include the 4 displayed projects.
+./app/views/projects/index.html.erb
+<% if @displayed_projects.any? %>
+
+<%= render "carousel", projects: @displayed_projects %>
+....
+Step 2
+Starting with the carousel indicators, we're going iterate through all of the projects displayed and fill out the "data-slide-to" and "class" fields dynamically.
+As you can see in the code highlighted below, if i is zero, we know the current project is the first one, which means this should be the project with the "active" class.
+./app/views/projects/_carousel.html.erb
+    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+          <% projects.count.times do |i| %>
+            <li data-target="#carousel-example-generic" data-slide-to="<%= i %>" class="<%= "active" if i.zero? %>"></li>
+          <% end %>
+      </ol>
+    
+      <!-- Wrapper for slides -->
+      ...
+
+Step 3
+Now, for the slides, we need to remove all the stuff we don't need and we need to add the same logic as before: for each project in the "displayed_objects" variable, display the project's image, name and short description.
+Also, we've added a link to "View Project", which for now just links to the current page ("#").
+./app/views/projects/_carousel.html.erb
+....
+          <!-- Wrapper for slides -->
+          <div class="carousel-inner" role="listbox">
+            <% projects.each_with_index do |project, index| %>
+              <div class="item <%= "active" if index.zero? %>">
+                <img src="<%= project.image_url %>" alt="...">
+                <div class="carousel-caption">
+                  <div class="container">
+                    <h2><%= project.name %></h2>
+                    <p><%= project.short_description %></p>
+                    <%= link_to "View Project", "#", class: "btn btn-success btn-lg" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        
+            <!-- Controls -->
+....
+
+Step 4
+As you can see, we now have a truly dynamic carousel.
+However, this is hard to test, since we only have one slide that corresponds to our only entry in the database.
+
+git commit -m "Add dynamic carousel"
+
+
+
 
 #############
 15
