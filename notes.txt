@@ -86,3 +86,49 @@ Now, we need to import all the files we've created on the  application.scss  fil
 
 Finally, we need to fetch our app's logo from the Stuk github repository and add it to the app > assets > image directory.
 GIT COMMIT -m "Add scss and logo to assets"
+
+4
+USER AUTH - INSTALLING DEVISE AND CREATING THE USER MODEL
+
+Devise is a very popular user authentication solution for Rails.
+
+'s a complete MVC solution and it's modular, so you only use what you really need.
+ For more information, please visit the "Getting started" section on Devise's official github repository page (https://github.com/plataformatec/devise).
+Step 1
+Let's start by adding the gem  to our Gemfile .
+# Devise
+gem 'devise'
+Step 2
+As always, let's run the bundle  command to install it.
+Step 3
+Now, we need to run the generator, which installs an initializer  that describes all of Devise's configuration options.
+rails generate devise:install
+
+RAILS GENERATE DEVISE:VIEWS
+
+Step 4
+At this point, we can add Devise to a model.
+Let's add it to a new "User" model.
+
+rails generate devise USER
+
+Step 5
+Before we migrate the table, let's open the  migration file  and let's add an extra field: customer_id.
+We'll do it now to prevent an extra migration down the road but, for now, this field doesn't have much use for us.
+    ./db/migrate/[]_devise_create_users.rb
+        ## Customer ID
+        t.string :customer_id
+        
+Step 6
+We're finally ready to migrate  the table.
+    rake db:migrate
+
+Step 7
+Ok, let's run the server and see what we have so far.
+rails s
+
+Step 8
+If you go to http://localhost:3000/users/sign_up, you can see we already have a sign up form with the CSS styles we've implemented before.
+
+Step 9
+The same goes for the http://localhost:3000/users/sign_in page.
