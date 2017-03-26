@@ -8,14 +8,24 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Brand</a>
+      <!-- OLD: <a class="navbar-brand" href="#">Brand</a> -->
+      <!-- NEW: -->
+        <%= link_to "#", class: "navbar-brand" do %>
+          <%= image_tag "logo.svg", class: "logo" %>
+        <% end %>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
-        <li></li>
-        <li></li>
+        <% if user_signed_in? %>
+            <li><%= link_to "Start a Project", "#" %></li>
+            <li><%= link_to "Account", "#" %></li>
+            <li><%= link_to "Sign Out", destroy_user_session_path, method: :delete %></li>
+        <% else %>
+            <li><%= link_to "Sign up", new_user_registration_path %></li>
+            <li><%= link_to "Log in", new_user_session_path %></li>
+        <% end %>
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->

@@ -275,3 +275,26 @@ git commit -m "Add the navbar"
 
 ############
 8
+CUSTOMIZING THE NAVBAR
+
+Step 1
+We're going to start by adding the "Stukstarter" logo where the "Brand" element used to be.
+As you can see in the code highlighted below, we've added an  image tag  with just the file name - there's no need for the path, since the image is in the default directory (app > assets > images).
+Also, we've added a "logo" class to our element. This class has already been styled in the stylesheets we added in the beginning of this course.
+Later, we'll link the image to the root_path, but since this path isn't defined yet, for now our link's destination is the current page.
+./app/views/layouts/_header.html.erb
+
+Step 2
+Take a look at your cool new logo!
+
+Step 3
+Next, we need to alter the navbar options according to the user's status.
+For this, we'll need to add an if statement to our partial:
+if the user's signed in, he/she should be able to start a new project, see the account settings, and sign out;
+if not, he/she should be able to sign up and log in;
+Note that we haven't defined a lot of the paths we're going to need, so for now, most of our links are going to the current page ("#").
+
+Step 4
+As you can see, our navbar options now change according to our status.
+
+git commit -m "Dynamically Customize the navbar"
