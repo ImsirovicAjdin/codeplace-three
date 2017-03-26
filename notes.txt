@@ -10,3 +10,13 @@ rails new stukstarter // stukstarter/ folder created,
 cd stukstarter; rails server -b $IP -p $PORT;
     it's running, how to get to it?
 click on 'Share' next to gear in c9 workspace, copy the 2nd link, paste in new tab and run
+git init; git add --all; git commit -m "Initial setup"
+git status;
+git log --oneline;
+
+git remote add origin https://github.com/ImsirovicAjdin/codeplace-three.git
+git commit -m "Add remote repo"
+git push -u origin master
+
+
+
