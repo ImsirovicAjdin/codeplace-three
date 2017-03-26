@@ -64,3 +64,25 @@ Finally, since we're using Sass, we need to import Font Awesome in our  applicat
 @import "bootstrap-sprockets";
 @import "bootstrap";
 
+git commit -m "Add font awesome"
+
+3
+CREATING THE SASS FILES
+Let's create all the stylesheets  our application needs.
+Let's start by creating a new file called "header.scss" and let's save it in the same directory as the  application.scss  file (app > assets > stylesheets).
+
+Next, copy all the code highlighted below and paste it in the newly-created Sass file.
+    ./app/assets/stylesheets/header.scss
+    
+Repeat the process for these next files:
+./app/assets/stylesheets/landing.scss
+./app/assets/stylesheets/projects.scss
+./app/assets/stylesheets/settings.scss
+./app/assets/stylesheets/variables.scss
+./app/assets/stylesheets/pledges.scss
+./app/assets/stylesheets/devise.scss
+
+Now, we need to import all the files we've created on the  application.scss  file. 
+
+Finally, we need to fetch our app's logo from the Stuk github repository and add it to the app > assets > image directory.
+GIT COMMIT -m "Add scss and logo to assets"
