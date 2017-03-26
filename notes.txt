@@ -632,33 +632,141 @@ This is going to be very useful when we need to create test projects directly on
 git commit -m "Install the annotate-models gem"
 
 #############
-12
+13
+CREATING A NEW TEST PROJECT
+In order to test our features, our "projects" table must be populated. 
+Since we still haven't built an interface, like a form, to create new projects, let's do it directly on the console.
+
+Step 1
+So, first thing we need to do is start the  Rails console .
+rails c
+
+Step 2
+Next, let's create a project with the following parameters:
+user_id:1
+name:"Kube"
+short_description:"It's my first project"
+description:"This is my long description!"
+image_url:"http://images.freeimages.com/images/previews/5b0/rubik-s-cube-1-1424892.jpg"
+goal:1000
+
+p = Project.new(user_id:1, name:"Kube", short_description:"It's my first project", description:"This is my long description!", image_url:"http://images.freeimages.com/images/previews/5b0/rubik-s-cube-1-1424892.jpg", goal:1000 )
+p.save                                                            
+Step 3
+Let's check that everything is OK.
+We should only have one project in our database, with the parameters you've defined before.
+Project.count
+Project.first
+
+git commit -m "Create a new test project"
+
 
 #############
-12
+14
+DYNAMIC CAROUSEL
 
 #############
-12
+15
+DYNAMIC PROJECTS
 
 #############
-12
+16
+NEW PROJECT FORM
 
 #############
-12
+17
+CREATING NEW PROJECTS
 
 #############
-12
-#############
-12
+18
+UPDATING AND DELETING PROJECTS
 
 #############
-12
+19
+EDITING THE SHOW VIEW
 
 #############
-12
-#############
-12
+20
+CREATING THE REWARD MODEL
 
 #############
-12
+21
+MORE DATE GEMS
+
+#############
+22
+NEW REWARD FORM
+
+#############
+23
+CREATING NEW REWARDS
+
+#############
+24
+UPDATING AND DELETING REWARDS
+
+#############
+25
+STYLING THE VIEWS
+
+#############
+26
+ADDING MISSING LINKS
+
+#############
+27
+CREATING THE PLEDGE MODEL
+
+#############
+28
+CONFIGURING THE CONTROLLER
+
+#############
+29
+STYLING THE VIEWS - NEW
+
+#############
+30
+STYLING THE VIEWS - INDEX
+
+#############
+31
+PAYPAL'S BRAINTREE - HOW IT WORKS
+
+#############
+32
+PAYPAL'S BRAINTREE - SETUP
+
+#############
+33
+INSTALLING THE GEM
+
+#############
+34
+CONFIGURING THE CONTROLLER
+
+#############
+35
+FINISHING PAYMENTS AND PLEDGES
+
+#############
+36
+BACKGROUND JOBS - SETUP
+
+#############
+37
+INSTALLING THE GEMS
+
+#############
+38
+EXTRAS - FRIENDLY IDs
+
+#############
+39
+IMPLEMENTING CANCANCAN
+
+#############
+40
+FINISHING TOUCHES
+
 
