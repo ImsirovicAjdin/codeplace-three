@@ -202,3 +202,76 @@ And a project belongs to a user.
 
 git commit -m "Create and configure the project model"
 
+############
+7
+ ADDING THE NAVBAR
+ 
+Step 1
+The first thing we need to do is to create a new "header" partial, where we'll put the navbar.
+touch app/views/layouts/_header.html.erb
+
+ Step 2
+Next, let's go to the "Components" section of Bootstraps' website and let's scroll down to the "Navbar" component.
+Click on the "Copy" button shown below, and paste the content inside the partial.
+    ./app/views/layouts/_header.html.erb
+
+Step 3
+Let's remove some stuff we don't need, like the dropdown and the form.
+
+Step 4
+If we clean up our code a little bit, we should have something like this.
+./app/views/layouts/_header.html.erb
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Brand</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li></li>
+        <li></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+Step 5
+Let's add the header partial to our  application.html.erb  file, just so we can see what we've got so far.
+./app/views/layouts/application.html.erb
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stukstarter</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<%= render "layouts/header" %>
+<%= yield %>
+
+</body>
+</html>
+
+Step 6
+As always, you need to start the server.
+( If you're logged in, open up a new browser window in incognito mode.)
+
+ Step 7
+As you can see, your application now has a navigation bar.
+
+git commit -m "Add the navbar"
+
+############
+8
