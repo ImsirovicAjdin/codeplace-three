@@ -298,3 +298,48 @@ Step 4
 As you can see, our navbar options now change according to our status.
 
 git commit -m "Dynamically Customize the navbar"
+
+############
+9
+DEFINING THE ROOT PATH
+
+Step 1
+Our application is going to have a landing page (the root path) that's going to display all the projects in our table.
+This is going to be the "index" action  of the "projects" controller .
+So, first thing we need is a "projects" controller. Let's create one!
+rails g controller projects
+
+Since we've already created a stylesheet called "projects.scss", this generator is going to raise a conflict regarding that file. Press the "n" key to skip it. Otherwise, the generator is going to override it.
+
+Step 2
+Next, we need to go to the controller and define the  "index" action .
+./app/controllers/projects_controller.rb
+
+class ProjectsController < ApplicationController
+  def index
+  end
+end
+
+Step 3
+We're ready to define our  root route , inside the  routes.rb file, as the "index" action of the "projects" controller.
+
+./config/routes.rb
+Rails.application.routes.draw do
+  root 'projects#index'
+  
+ Step 4
+Ok, so all that's left to do is to add a template  for this action.
+Let's do it by creating a new "index.html.erb" file inside the "projects" directory.
+ touch app/views/projects/index.html.erb
+
+Step 5
+We'll come back to this template in the next chapter, but for now, let's just put a level 1 heading with the text "Hello, world".
+./app/views/projects/index.html.erb
+<h1>Hello, World</h1>
+
+Step 6
+If we go to the root of the application, we should see the navbar and the "Hello, world" message.
+
+git commit -m "Define the root path"
+
+###########
