@@ -49,5 +49,18 @@ Copy the imports  on the github page and paste them on the file, as shown below.
 
 (D) Git add "bootstrap-sass" gem, application.scss, application.js
 
+2
+INSTALLING FONT AWESOME
+Since we're working with Ruby on Rails, we'll need to implement the 'font-awesome-rails ' gem, "which provides the Font-Awesome web fonts and stylesheets as a Rails engine for use with the asset pipeline".
+https://github.com/bokmann/font-awesome-rails
+https://github.com/bokmann/font-awesome-rails#installation
 
+The first step, as always, is to add the gem to our Gemfile .
+Once again, let's run  bundle install .
+Finally, since we're using Sass, we need to import Font Awesome in our  application.scss file.
+
+// "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"
+@import "font-awesome";
+@import "bootstrap-sprockets";
+@import "bootstrap";
 
