@@ -421,3 +421,192 @@ Everything's OK, let's move on!
 git commit -m "Create the carousel"
 
 ##############
+11
+DISPLAYING THE PROJECTS
+
+Step 1
+Below the carousel, we're going to create a couple of divs with Bootstrap specific classes where we're going to display the projects.
+./app/views/projects/index.html.er
+<%= render "projects/carousel" %>
+
+<div class="container">
+	<br><br><br>
+	<h3 class="project-subtitle">Our Project</h3>
+	<div class="row">
+		
+	</div>
+</div>
+
+Step 2
+Next, let's create a "project" partial.
+touch app/views/projects/_project.html.erb
+
+Step 3
+Our partial is going to include the project's title, description, progress bar and stats, as shown below.
+
+./app/views/projects/_project.html.erb
+        <div class="col-md-4 col-sm-6 col-xs-12">
+        
+          <div class="project-box">
+            <img src="http://images.freeimages.com/images/previews/5b0/rubik-s-cube-1-1424892.jpg" alt="..." width="100%" height="200px">
+            <div class="description-box">
+        
+              <!-- Project Title -->
+              <div class="title">
+        	  </div>
+        
+        	  <!-- Project Description -->
+        	  <div class="description">
+        	    This is a description
+        	  </div>
+        
+        	  <!-- Project Progress Bar -->
+        	  <div clas="project-bar">
+        	    <div class="progress">
+        	      <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100%" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+        	    	<span class="sr-only">100% Complete (Success)</span>
+        	      </div>
+        	    </div>
+        	  </div>
+        
+        	  <!-- Project Stats -->
+        	  <div class="stats">
+        	    <ul>
+        	  	  <!-- percentage of funding -->
+        	  	  <li>100% <br><span class="label">funded</span></li>
+        	  	  <!-- total amount pledged (dollars) -->
+        	  	  <li>$1000 <br><span class="label">pledged</span></li>
+        	  	  <!-- days to go 'till deadline -->
+        	  	  <li>10 <br><span class="label">days to go</span></li>
+        	    </ul>
+              </div>
+        
+            </div>
+          </div>
+        
+        </div>
+        
+Step 4
+Let's render the partial in the index template.
+./app/views/projects/index.html.er
+<%= render "projects/carousel" %>
+
+<div class="container">
+	<br><br><br>
+	<h3 class="project-subtitle">Our Project</h3>
+	<div class="row">
+		<%= render "project" %>
+	</div>
+</div>
+
+Step 5
+OK, let's see how this partial looks in our landing page.
+rails s
+
+As you can see, we now have a project block with all the project's info.
+
+Step 6
+Our landing page is missing something ... there's no way for us to create a new project.
+So, let's add a new link below the project blocks.
+Note that the path is not yet configured, so the link's destination is the current page.
+./app/views/projects/index.html.er
+...
+	<h3 class="project-subtitle">Our Project</h3>
+	<div class="row">
+		<%= render "project" %>
+	</div>
+</div>
+
+<div class="container text-center">
+	<br><br><br>
+	<h2>Create your first project</h2>
+	<%= link_to "Start project!", "#", class: "btn btn-success btn-lg" %>
+</div>
+
+Step 7
+Now we have a problem ... this button should only appear when the user doesn't have any projects.
+Step 8
+Let's fix that by creating an if/else statement:
+if our user has projects to display, we should display them;
+else, we should display the "Start project" button;
+As you can see, our if statement is using the @displayed_projects  global variable  which doesn't exist.
+./app/views/projects/index.html.er
+        <% if @displayed_projects.any? %>
+        
+        <%= render "projects/carousel" %>
+        
+          <div class="container">
+        	<br><br><br>
+        	<h3 class="project-subtitle">Our Project</h3>
+        	<div class="row">
+        	  <%= render "project" %>
+        	</div>
+          </div>
+        
+        <% else %>
+        
+          <div class="container text-center">
+        	<br><br><br>
+        	<h2>Create your first project</h2>
+        	<%= link_to "Start project!", "#", class: "btn btn-success btn-lg" %>
+          </div>
+        
+        <% end %>
+
+Step 9
+So, inside the projects controller, let's state that the  @displayed_projects  global variable  corresponds to the 4 first entries of the "projects" table.
+
+./app/controllers/projects_controller.rb
+class ProjectsController < ApplicationController
+  def index
+    @displayed_projects = Project.take(4)
+  end
+end
+
+ Step 10
+We also need to define a @projects  global variable  in the controller, which is going to represent all the entries in the "projects" table.
+
+./app/controllers/projects_controller.rb
+class ProjectsController < ApplicationController
+  def index
+    @projects = Project.all
+    @displayed_projects = Project.take(4)
+  end
+end
+
+Step 11
+In the "index" view, we can now replace the "project" partial with the  global variable  @projects.
+
+./app/views/projects/index.html.er
+        <% if @displayed_projects.any? %>
+        
+        <%= render "projects/carousel" %>
+        
+          <div class="container">
+        	<br><br><br>
+        	<h3 class="project-subtitle">Our Project</h3>
+        	<div class="row">
+        	  <%= render @projects %>
+        	</div>
+          </div>
+        
+        <% else %>
+        
+          <div class="container text-center">
+        	<br><br><br>
+        	<h2>Create your first project</h2>
+        	<%= link_to "Start project!", "#", class: "btn btn-success btn-lg" %>
+          </div>
+        
+        <% end %>
+
+Step 12
+Now, let's go back to our application.
+rails s
+
+Step 13
+As you can see, since we don't have any projects, all we can see for now is the "Create your first project" button.
+
+git commit -m "Display the projects"
+
+#############
