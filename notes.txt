@@ -18,5 +18,36 @@ git remote add origin https://github.com/ImsirovicAjdin/codeplace-three.git
 git commit -m "Add remote repo"
 git push -u origin master
 
+1
+INSTALL BOOTSTRAP-SASS
+Sass (Syntactically Awesome Style Sheets) is a CSS extension language with lots of features, one of the most important being the ability to create variables.
+Variables are "a way to store information that you want to reuse throughout your stylesheet. You can store things like colors, font stacks, or any CSS value you think you'll want to reuse".
+ Check out the "Sass Basics" on Sass's website (http://sass-lang.com/guide) for more info.
+Since we're working with Ruby on Rails, we'll need to implement the 'bootstrap-sass' gem , which is a Sass-powered version of Bootstrap 3.
+
+Let's start by visiting the  gem's official github repository.
+Scroll down to the "Installation" chapter to see all the information you need to get started.
+https://github.com/twbs/bootstrap-sass#installation
+
+As you can see, we need to have two gems installed: 'bootstrap-sass' and  'sass-rails';
+If you notice, the 'sass-rails' gem is already in your Gemfile  (it's installed by default when you install Rails).
+So, we only need to add the 'bootstrap-sass' gem.
+(A)
+gem 'bootstrap-sass', '~> 3.3.6'
+As always, let's run the  bundle install  command to install it.
+(B)
+Next, we need to rename the application.css file (inside app > assets > stylesheets) as application.scss and delete all its content.
+Copy the imports  on the github page and paste them on the file, as shown below.
+
+(C) Lastly, we need to require  bootstrap-sprockets  in our  application.js  file (inside app > assets > javascripts).
+./app/assets/javascripts/application.js
+    //= require jquery
+    //= require jquery_ujs
+    //= require turbolinks
+    //= require bootstrap-sprockets
+    //= require_tree .
+
+(D) Git add "bootstrap-sass" gem, application.scss, application.js
+
 
 
