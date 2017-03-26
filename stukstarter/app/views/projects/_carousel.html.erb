@@ -2,7 +2,8 @@
   <!-- Indicators -->
   <ol class="carousel-indicators">
     <% projects.count.times do |i| %>
-      <li data-target="#carousel-example-generic" data-slide-to="<%= i %>" class="<%=active" if i.zero? %>"></li>
+      <li data-target="#carousel-example-generic" data-slide-to="<%= i %>" class="<%= "active" if i.zero? %>"></li>
+
     <% end %>
   </ol>
 
@@ -10,11 +11,12 @@
   <div class="carousel-inner" role="listbox">
     <% projects.each_with_index do |project, index| %>
       <div class="item <%= "active" if index.zero? %>">
-        <img src="<%= project.image_url" %>" alt="">
+        <img src="<%= project.image_url %>" alt="...">
+
         <div class="carousel-caption">
           <div class="container">
             <h2><%= project.name %></h2>
-            <p><%= project.short_desciption %></p>
+            <p><%= project.short_descrition %></p>
             <%= link_to "View Project", "#", class: "btn btn-success btn-lg" %>
           </div>
         </div>
