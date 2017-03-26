@@ -176,3 +176,29 @@ Environment data not found in the schema. To resolve this issue, run:
 
 dba16fb20d2e79b96cb4dec15cb90afd21fd6ae3
 
+##########
+6
+CREATING AND CONFIGURING THE PROJECT MODEL
+
+Step 1
+Let's generate the "Project" model without adding any fields.
+    rails generate model Project
+
+Step 2
+Now, let's open up our  migration file  and let's add all the fields our "projects" table is going to need.
+First, we need to reference the "users" table by creating a new  foreign key - this key is going to create a new field called user_id.
+Our projects are also going to need a name, a short description, a description, an image url, a status, a goal and an expiration date.
+    ./db/migrate/[]_create_projects.rb
+
+Step 3
+We can now migrate  the database.
+    rake db:migrate
+
+Step 4
+Finally, we need to establish the relationships between the "User" and "Project" models:
+    A user can have many projects.
+
+And a project belongs to a user.
+
+git commit -m "Create and configure the project model"
+
