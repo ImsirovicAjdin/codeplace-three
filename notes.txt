@@ -132,3 +132,47 @@ If you go to http://localhost:3000/users/sign_up, you can see we already have a 
 
 Step 9
 The same goes for the http://localhost:3000/users/sign_in page.
+
+5
+STYLING DEVISE'S VIEWS
+Step 1
+Let's start by styling the sign in page.
+Open up the "new.html.erb" file inside the views > devise > sessions directory.
+We'll need to create some new divs with specific class names, to make sure Bootstrap's styles are correctly applied.
+ Please visit Bootstrap's CSS page (http://getbootstrap.com/css/) for more info.
+    ./app/views/devise/sessions/new.html.erb
+
+Step 2
+Also, let's improve the "Log in" button with a little Bootstrap magic.
+Step 3
+If you go back to the application and refresh the page, you'll see that the log in form looks a little different.
+Step 4
+Now, let's basically do the same for the sign up view.
+Go to views > devise > registrations and open up the "new.html.erb" file.
+Wrap the content with the same divs as before.
+Also, we're going to add the same class to the "Sign Up" button.
+Step 5
+Now our sign up page looks very much like our log in page.
+Step 6
+OK, the final page we're going to style is the settings page, i.e., the "edit.html.erb" file inside views > devise > registrations.
+Let's add the exact same divs and let's add the the same class to the "Update" button.
+
+
+******************
+ERROR:
+rails db:migrate SQLite3::SQLException: duplicate column name
+SOLUTION:
+try migrating your DB to version=0 with command: rake db:migrate VERSION=0
+and then run  rake db:migrate
+
+rake db:reset_password_sent_at
+rake db:migrate:reset
+rake db:drop:all
+
+Environment data not found in the schema. To resolve this issue, run: 
+
+        bin/rails db:environment:set RAILS_ENV=development
+******************
+
+dba16fb20d2e79b96cb4dec15cb90afd21fd6ae3
+
