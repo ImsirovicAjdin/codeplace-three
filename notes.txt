@@ -723,6 +723,12 @@ git commit -m "Add dynamic carousel"
 #############
 15
 DYNAMIC PROJECTS
+Step 1
+Let's slowly remove all the hardcoded data in the project partial, and let's make the project blocks dynamic.
+./app/views/projects/_project.html.erb
+Step 2
+If you go back to the landing page, you'll now see that the project block's image, title and short description are all being filled out dynamically. However, all the stats are still hardcoded.
+git commit -m "Add dynamic projects"
 
 #############
 16
