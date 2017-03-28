@@ -1635,6 +1635,84 @@ git commit -m "Updating and deleting awards"
 #############
 25
 STYLING THE VIEWS
+Step 1
+Let's start with the "show" view in the "projects" controller.
+If you remember, we left a blank space for a "reward" partial, which didn't exit. Let's create it now.
+touch app/views/rewards/_reward.html.erb
+
+Step 2
+And let's render it in the "show" view.
+./app/views/projects/show.html.erb
+<<EOF
+		<div class="col-md-4">
+			<p><%= render @rewards %></p>
+			<%= link_to 'Add Reward', new_project_reward_path(@project), class: "btn btn-primary" %>
+		</div>
+	</div>
+</div>
+
+Step 3
+Take a look at the code we'll add to the partial.
+We started by adding 2 links similar to the ones on the "show" template, which are later only going to be visible to the project's owner.
+Then, the most important part. We've added a div with:
+the minimum pledge value allowed - which we know, since it matches the project's reward value on the "rewards" table;
+the number of pledgers - which we still don't know, since we still haven't created the "Pledges" model, so we've hardcoded "20 backers";
+the project's description;
+the project's estimated delivery date;
+Note also that on the backers p tag, we're adding, inside the span tag, a icon with a "fa fa-cog" class.
+This is a specific "Font Awesome" class that, as you can probably guess, displays a cog.
+./app/views/rewards/_reward.html.erb
+<div class="text-right">
+	<%= link_to 'Edit', edit_project_reward_path(@project, reward) %>
+	<%= link_to 'Delete', project_reward_path(@project, reward), method: :delete, data: { confirm: "Are you sure?" } %>
+</div>
+
+<%= link_to "#", class: "reward" do %>
+
+	<div class="reward-box">
+
+		<p class="pledge">Pledge $<%= reward.value %> or more</p>
+
+		<p class="backers">
+			<span class="primary-color"><i class="fa fa-cog"></i></span>
+			20 backers
+		</p>
+
+		<p class="description"><%= reward.description %></p>
+
+		<p class="time">
+			<span class="grey">Estimated delivery:</span>
+			<br><%= reward.estimated_delivery %>
+		</p>
+
+		<div class="reward-hover">
+			Select this reward.
+		</div>
+	</div>
+<% end %>
+
+Step 4
+Before we can see this in our application, we need to go back to the "projects" controller and define the @rewards  global variable  inside the "show" action.
+<<BOF
+class ProjectsController < ApplicationController
+  before_action :authenticate_user!, except: [:index, :show]
+  before_action :set_project, only: [:show, :edit, :update, :destroy]
+
+  def index
+    @projects = Project.all
+    @displayed_projects = Project.take(4)
+  end
+
+  def show
+    @rewards = @project.rewards
+  end
+
+Step 5
+Let's refresh the page, and let's see our first reward!
+
+If you try to hover the reward, you can see some really cool styling going on. (IF YOU CLICK IT, YOU'D GET AN ERROR)
+
+git commit -m "Styling the views"
 
 #############
 26
