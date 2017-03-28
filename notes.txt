@@ -1547,11 +1547,90 @@ We now have a completely functional  "create" action .
 git commit -m "Creating new rewards"
 
 
-
-
 #############
 24
 UPDATING AND DELETING REWARDS
+
+Step 1
+Before we can set the "update" and "destroy" actions, the application needs to know to which particular reward we're referring to.
+We can do this by setting the reward before every action, except, of course, "new" and "create".
+As you can see, we've defined the set_reward private method below set_project, and we're invoking it in a  before_action .
+./app/controllers/rewards_controller.rb
+<<BOF
+    class RewardsController < ApplicationController
+    
+      before_action :authenticate_user!
+      before_action :set_project
+      before_action :set_reward, except: [:new, :create]
+      ....
+    
+        def set_reward
+          @reward = @project.rewards.find(params[:id])
+        end
+    
+        def reward_params
+          params.require(:reward).permit(:name, :description, :value, :shipping, :number_available, :estimated_delivery)
+        end
+    
+    end
+<<EOF
+
+Step 2
+So, now we can define the  "update" action.
+./app/controllers/rewards_controller.rb
+LN 25:
+  def update
+    respond_to do |format|
+      if @reward.update(reward_params)
+        format.html { redirect_to @project, notice: "Reward was successfully updated" }
+      else
+        format.html { render :edit }
+      end
+    end
+  end
+  
+  private...
+
+Step 3
+As always, we need the view for this action.
+touch app/views/rewards/edit.html.erb
+
+Step 4
+We can just copy and paste the code inside the "new.html.erb " file but instead of "Add a new rewards", we're going to put "Edit reward".
+./app/views/rewards/edit.html.erb
+    <div class="container">
+    	<h1>Edit reward</h1>
+    	<%= render 'form' %>
+    </div>
+    
+Step 5
+Now, let's add the "edit" and "destroy" actions.
+./app/controllers/rewards_controller.erb
+LN 14
+def edit
+end
+
+LN 38
+def destroy 
+  @reward.destroy
+  respond_to do |format|
+    format.html { redirect_to projects_path(@project), notice: "Reward was successfully destroyed" }
+  end
+end
+
+Step 6
+So, let's see this thing in action.
+Let's go to http://localhost:3000/projects/2/edit and see if we can edit the project.
+Change something on your form, the goal, for example.
+
+Step 7
+Now, if you click on the "Update Project" button, you'll be able to see your altered data.
+
+NOTE TO SELF: IT seems that the project preview doesnt update with the information. Funny. It updates on the edit page, but it does not update on the project preview page (as there is still that html tagged description from the wysihtml5)
+
+git commit -m "Updating and deleting awards"
+
+
 
 #############
 25
