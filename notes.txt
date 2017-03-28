@@ -1285,6 +1285,52 @@ git commit -m "Create the reward model"
 #############
 21
 MORE DATE GEMS
+Working with dates can be a little complicated with Rails.
+Luckily, there are some gems that can do all the hard work for us: "datetimepicker-rails" and "momentjs-rails".
+
+Step 1
+Datetime picker is a very cool gem that "packages the bootstrap-datetimepicker for Rails asset pipeline and creates the Simple Form custom fields for your project".
+ Please visit the gem's github official repository (https://github.com/zpaulovics/datetimepicker-rails) for more info.
+
+Step 2
+MomentJS, on the other hand, is "a lightweight javascript date library for parsing, manipulating, and formatting dates". We're going to install the 'momentjs-rails' gem, which is basically the Moment.js JavaScript library ready to play with the Rails Asset Pipeline.
+ Please visit the gem's github official repository (https://github.com/derekprior/momentjs-rails) for more info.
+
+Step 3
+Let's add them both to our Gemfile .
+# Date Validator
+gem 'date_validator'
+
+# Date Picker
+gem 'datetimepicker-rails', github: 'zpaulovics/datetimepicker-rails', branch: 'master', submodules: true
+
+# MomentJS
+gem 'momentjs-rails'
+
+Step 4
+And let's install them.
+  bundle install
+  
+Step 5
+We need some additional steps to install the datetimepicker-rails gem .
+First, let's require "moment", "bootstrap-datetimepicker" and "pickers" in the  application.js  file.
+...
+//= require bootstrap-sprockets
+//= require bootstrap-wysihtml5
+//= require moment
+//= require bootstrap-datetimepicker
+//= require pickers
+//= require_tree .
+
+Step 6
+Next, let's run the generator with the Font Awesome option.
+    rails generate datetimepicker_rails:install Font-Awesome
+    
+Step 7
+In order to install the momentjs-rails gem we need to require moment in our  application.js  file, but since we already did this in step 5, we don't need anything else.
+
+git commit -m "Add more date gems"
+
 
 #############
 22
