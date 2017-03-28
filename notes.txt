@@ -1899,6 +1899,90 @@ git commit -m "Create the pledge model"
 #############
 28
 CONFIGURING THE CONTROLLER
+Step 1
+Let's create the "pledges" controller.
+  rails g controller pledges
+  Since we've already created a stylesheet called "pledges.scss", this generator is going to raise a conflict regarding that file. Press the "n" key to skip it. Otherwise, the generator is going to override it.
+Step 2
+Let's start by creating the  before actions  and the  setter methods.
+As usual, we don't want non-authenticated users to be able to access this controller.
+Also, we need to tell our controller to which project and reward we're referring to.
+./app/controllers/pledges_controller.rb
+    class PledgesController < ApplicationController
+    
+      before_action :authenticate_user!
+      before_action :set_project
+      before_action :set_reward
+    
+      private
+    
+        def set_project
+          @project = Project.find(params[:project_id])
+        end
+    
+        def set_reward
+          @reward = @project.rewards.find_by_id(params[:reward_id])      
+        end
+    
+    end
+    
+Step 3
+Next, let's define the "new" method.
+./app/controllers/pledges_controller.rb
+<<BOF
+class PledgesController < ApplicationController
+
+  before_action :authenticate_user!
+  before_action :set_project
+  before_action :set_reward
+
+  def new
+    @pledge = current_user.pledges.build
+    @rewards = @project.rewards
+    respond_to do |format|
+      format.html
+    end
+  end
+  
+Step 4
+Let's also define the "index" action, which is where we'll display info about the project's backers.
+This will only be visible to the project's owner once we implement the authorization features, but for now, it's visible to any user.
+
+./app/controllers/pledges_controller.rb
+<<BOF
+class PledgesController < ApplicationController
+
+  before_action :authenticate_user!
+  before_action :set_project
+  before_action :set_reward
+  # NEW BELOW!!!!
+  def index
+    @pledges = @project.pledges
+    respond_to do |format|
+      format.html 
+    end
+  end
+  
+Step 5
+Before we move on to the views, let's just quickly configure the routes.
+Just as we did for the "rewards" resource, let's also nest the "pledges" route inside the "projects" route.
+./config/routes.rb
+
+Rails.application.routes.draw do
+
+  root 'projects#index'
+
+  devise_for :users
+
+  resources :projects do 
+    resources :rewards, only: [:new, :create, :edit, :update, :destroy]
+    # NEW BELOW!!!!
+    resources :pledges
+  end
+
+git commit -m "Configure the pledges controller"
+
+
 
 #############
 29
