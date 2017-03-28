@@ -1335,6 +1335,139 @@ git commit -m "Add more date gems"
 #############
 22
 NEW REWARD FORM
+Step 1
+Let's start by generating the "rewards" controller.
+We'll create the views manually, so we'll leave them out for now.
+
+rails g controller rewards
+
+Step 2
+Users shouldn't see rewards when they're not logged in, so let's add a  before_action  inside the controller.
+class RewardsController < ApplicationController
+    
+    before_action :authenticate_user!
+    
+end
+
+Step 3
+Let's take care of the routing.
+We'll need to define a nested route, I'll explain why in the next step.
+./config/routes.rb
+BOF:
+Rails.application.routes.draw do
+
+  root 'projects#index'
+
+  devise_for :users
+
+  resources :projects do 
+    resources :rewards, only: [:new, :create, :edit, :update, :destroy]
+  end
+
+  # The priority is based upo...
+  
+Step 4
+If you run the following command, you'll see that we now have project_rewards paths, i.e.: new_project_reward and edit_project_reward.
+That's the result of nesting  the rewards route inside the projects route.
+
+      rake routes
+      
+Step 5
+Since every reward belongs to a project, we need to set the project inside the controller.
+So, let's create a new  private method  called set_project and let's invoke it in a  before_action .
+./app/controllers/rewards_controller.rb
+    class RewardsController < ApplicationController
+    
+      before_action :authenticate_user!
+      before_action :set_project
+    
+      private
+        def set_project
+          @project = Project.find(params[:project_id])
+        end
+    
+    end
+    
+Step 6
+Now, let's create the controller's first action: "new".
+
+./app/controllers/rewards_controller.rb
+    class RewardsController < ApplicationController
+    
+      before_action :authenticate_user!
+      before_action :set_project
+    
+      def new
+        @reward = @project.rewards.build
+        respond_to do |format|
+          format.html 
+        end
+      end
+    
+      private
+        def set_project
+          @project = Project.find(params[:project_id])
+        end
+    
+    end
+    
+Step 7
+Let's create the actual template for this action.
+touch app/views/rewards/new.html.erb
+
+Step 8
+And let's also create a "form" partial .
+touch app/views/rewards/_form.html.erb
+
+Step 9
+The "new" template is going to be very simple, since the actual form is going to be inside the partial.
+./app/views/rewards/new.html.erb
+    <div class="container">
+    	<h1>Add a new reward</h1>
+    	<%= render 'form' %>
+    </div>
+
+Step 10
+Inside our "form" partial, we're going to use the simple_form gem  once again.
+Note that we're passing an array of arguments to the simple_form - we'll need both @project and @reward.
+Also, note that we're using the datepicker-rails gem  on the estimated delivery field.
+./app/views/rewards/_form.html.erb
+    <%= simple_form_for([@project, @reward], html: { class: "form-horizontal" }) do |f| %>
+    	<%= f.input :description %>
+    	<%= f.input :value %>
+    	<%= f.input :shipping %>
+    	<%= f.input :number_available %>
+    	<%= f.input :estimated_delivery, :as => :date_picker %>
+    	<div class="action">
+    		<%= f.button :submit %>
+    	</div>
+    	
+    <% end %>
+
+Step 11
+Let's go back to the "projects" controller's  "show" view  and make some quick changes, so we can see this thing in action!
+Remember when we were building our landing page, our links' destination was always the current page, since we didn't have the necessary paths. Now that we have them, let's correct the "Add Reward" link.
+
+./app/views/projects/show.html.erb
+<<EOF:
+		<div class="col-md-4">
+			<p>Rewards will be rendered in here ...</p>
+			<%= link_to 'Add Reward', new_project_reward_path(@project), class: "btn btn-primary" %>
+		</div>
+	</div>
+</div>
+
+Step 12
+Run the server and open your application.
+rails s
+
+Step 13
+If you click on one of the landing page's projects, and then click on the "Add Reward" button at the bottom of the page, you'll see a new form.
+
+Step 14
+We still can't create rewards, but let's make sure our form is working properly.
+
+git commit -m "Build New Reward form"
 
 #############
 23
