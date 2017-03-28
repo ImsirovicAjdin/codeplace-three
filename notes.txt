@@ -858,6 +858,77 @@ If go to the new project path (<ws>/projects/new) you'll see that our "new proje
 #############
 17
 CREATING NEW PROJECTS
+Step 1
+Now that we've created the form, let's make it functional.
+Let's start by defining the  "create" action in the "projects" controller.
+Take a look at the highlighted code.
+As you can see, we've added an if/else statement inside the "create" action.
+if the project is saved, we're going to redirect the user to the the project's info page ("show" view) and display a success message;
+if not, we're going to display the "edit" view.
+Finally, we've created the private method  project_params, which is passing the project's parameters as arguments to the create action.
+
+./app/controllers/projects_controller.rb
+    
+      def create
+        @project = current_user.projects.build(project_params)
+    
+        respond_to do |format|
+          if @project.save
+            format.html { redirect_to @project, notice: "Project was successfully created" }
+            format.json { render :show, status: :ok, location: @project }
+          else
+            format.html { redirect_to :edit }
+            format.json { render json: @project.errors, status: :unprocessable_entity }
+          end
+        end
+      end
+    
+      private
+    
+        def project_params
+          params.require(:project).permit(:name, :short_description, :description, :goal, :image_url, :expiration_date)
+        end
+    
+    end
+
+.EOF
+
+Step 2
+We still need to define the "show" and "edit" actions, but before we do that, let's just create another private method - set_project - that gets the project from the params.
+We're going to invoke this method within a new before action , which is going to be available only for the show, edit, update and destroy actions.
+./app/controllers/projects_controller.rb
+<<BOF:
+    class ProjectsController < ApplicationController
+      before_action :authenticate_user!, except: [:index, :show]
+      before_action :set_project, only: [:show, :edit, :update, :destroy]
+...
+EOF:
+...
+  private
+
+    def set_project
+      @project = Project.find(params[:id])
+    end
+
+    def project_params
+...
+
+Step 3
+Let's go back to our application, sign in and go straight to our form: http://localhost:3000/projects/new.
+Fill out the form with some random data 
+
+Step 4
+If you try to submit the form now, you'll see a "Missing template" error, which means the form submission went through.
+
+Step 5
+So, let's create the missing template!
+
+Step 6
+Let's go back to the form, fill it out again and submit it.
+Since our show template is still empty,  you're going to see a blank page, but if you go back to the application's root, you can see the new project on the landing page.
+Also, as you can see, the carousel is correctly displaying both of our project images.
+
+
 
 #############
 18
