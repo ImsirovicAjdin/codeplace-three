@@ -1987,6 +1987,123 @@ git commit -m "Configure the pledges controller"
 #############
 29
 STYLING THE VIEWS - NEW
+Step 1
+At the current moment, we don't have any view for the pledges controller.
+Let's start with the "new" template.
+
+touch app/views/pledges/new.html.erb
+
+Step 2
+Inside this file, we're just going to need the project's title and the pledge form, which we'll include in a new partial.
+./app/views/pledges/new.html.erb
+    <div class="project-intro">
+    	<div class="container">
+    		<div class="row">
+    			<div class="col-md-12">
+    				<h2 class="project-title text-center"><a href=""><%= @project.name %></a></h2>
+    				<div class="pledge-box">
+    					<%= render 'form' %>
+    				</div>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+    
+Step 3
+So, let's create that partial.
+
+touch app/views/pledges/_form.html.erb
+
+Step 4
+We're going to use  simple_form  gem once again, to help us create the pledge form.
+As you can see below, we've set our form url as the current page - later, we'll change this to the payments page.
+Also, we've added a fieldset  with an input field for the pledge amount.
+./app/views/pledges/_form.html.erb
+
+<%= simple_form_for @pledge, url: "#", method: :get do |f| %>
+
+	<h1>Alrighty!</h1>
+	<h2>Enter your pledge amount</h2>
+	<fieldset>
+		<%= f.input :amount, placeholder: "Enter your pledge amount:", input_html { value: @reward.try(:value), required: true } %>
+	</fieldset>
+	
+<% end %>
+
+Step 5
+For the next fieldset, we're going to use a Rails helper called collection_radio_buttons, to help us add some logic to our radio buttons.
+./app/views/pledges/_form.html.erb
+<<EOF
+    ...
+		<%= f.input :amount, placeholder: "Enter your pledge amount:", input_html: { value: @reward.try(:value), required: true } %>
+	</fieldset>
+
+	<fieldset>
+		<legend>Select your reward</legend>
+		<%= f.collection_radio_buttons(:reward_id, @rewards, :id, :id, :checked => @reward.try(:id)) do |b| %>
+			<% b.label(:"data-value" => b.value) { b.radio_button + b.object }  %>
+		<% end %>
+	</fieldset>
+
+<% end %>
+
+Step 6
+Finally, let's add the submit button and a div with a clearfix  class.
+
+./app/views/pledges/_form.html.erb
+<<EOF
+...
+			<% b.label(:"data-value" => b.value) { b.radio_button + b.object }  %>
+		<% end %>
+	</fieldset>
+	
+	<%= f.submit "Continue to next step", class: "btn btn-success btn-md pull-right" %>
+	<div class="clearfix"></div>
+
+<% end %>
+
+Step 7
+So, we want to test this view, but to do so, we need to know the correct path.
+If we run  rake routes  again, we can see that the "new" action of the "pledges" controller corresponds to the new_project_pledge path.
+
+Step 8
+Now, if we go back to the "show" template on the "projects" controller, we can use this path on the "Back this project" link.
+./app/views/projects/show.html.erb
+LN18
+				<%= link_to 'Back this project', new_project_pledge_path(@project), class: "btn btn-success btn-lg" %>
+(I copied over the whole file cuz I saw the first line not being present as well in my version, so besides this html wrapping div, maybe there was something else missing, so I added it)
+
+Step 9
+Let's start the server to see if this is working.
+rails s
+Step 10
+Alrighty! Our "new" template is now displaying an input field where we can enter the pledge amount, and we can select a reward.
+http://localhost:3000/projects/2/pledges/new
+
+Step 11
+But we have a problem ... as you can see, instead of the reward's name, we're seeing its object.
+To fix this, let's create a helper method  called pledge_radio_button and let's pass the b.object as an argument to this helper method.
+./app/views/projects/_FORM.html.erb
+LN13 *(wrap the b.object inside a method)
+
+Step 12
+Inside the helper, we're going to create a pledge_radio_button method which receives a reward argument.
+This method formats the reward's value, description and estimated delivery date correctly.
+./app/helpers/pledges_helper.rb
+    module PledgesHelper
+      def pledge_radio_button(reward)
+        text =  " $#{reward.value}"
+        text += "<p>#{reward.description}</p>"
+        text += "<p><strong>Estimated Delivery: </strong>#{reward.estimated_delivery}</p>"
+        text.html_safe
+      end
+    end
+
+Step 13
+Go back to the application and refresh the page.
+As you can see, the reward info is now formatted perfectly.
+
+git commi t-m "Style the views new"
 
 #############
 30
