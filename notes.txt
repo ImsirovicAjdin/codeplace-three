@@ -1,3 +1,4 @@
+https://github.com/stukio/stukstarter_app/blob/master/app/views/pledges/_form.html.erb
 
 Crowdfunding marketplace from Codeplace in Rails 5
 
@@ -2103,11 +2104,147 @@ Step 13
 Go back to the application and refresh the page.
 As you can see, the reward info is now formatted perfectly.
 
-git commi t-m "Style the views new"
+git commit -m "Style the views new"
 
 #############
 30
 STYLING THE VIEWS - INDEX
+Step 1
+Let's start by creating the "index.html.erb" file.
+touch app/views/pledges/index.html.erb
+
+Step 2
+The "index" template is going to be very similar to the "new", except instead of the "form" partial, we're going to render a "table" partial, that we still need to create.
+./app/views/pledges/index.html.erb
+
+    <div class="project-intro">
+    	<div class="container">
+    		<div class="row">
+    			<div class="col-md-12">
+    				<div class="table-responsive">
+    					<%= render 'pledges/table', pledges: @pledges %>
+    				</div>
+    			</div>
+    		</div>	
+    	</div>	
+    </div>
+    
+Step 3
+Let's create the partial.
+touch app/views/pledges/_table.html.erb
+
+Step 4
+So, our table partial is also going to be pretty simple.
+If there are no pledges, let's display a simple message below the head.
+If there are pledges to display, let's render a "pledge" partial for each one.
+./app/views/pledges/_table.html.erb
+    <table class="table table-hover">
+    
+    	<thead>
+    		<tr>
+    			<th>#</th>
+    			<th>Project</th>
+    			<th>Pledge</th>
+    			<th>Estimated Delivery</th>
+    		</tr>
+    	</thead>
+    
+    	<tbody>
+    		<% if pledges.any? %>
+    			<% pledges.each do |pledge| %>
+    				<%= render 'pledge', pledge: pledge %>
+    			<% end %>
+    		<% else %>
+    			<tr>
+    				<td colspan="4">No pledges available</td>
+    			</tr>
+    		<% end %>
+    	</tbody>
+    </table>
+    
+Step 5
+Let's create the "pledge" partial.
+
+touch app/views/pledges/_pledge.html.erb
+
+Step 6
+This partial is going to include the fields defined in the table partial:
+the pledge id (#);
+the project corresponding to that pledge (Project);
+the pledge amount (Pledge);
+the pledge's estimated delivery time (Estimated Delivery).
+
+Step 7
+Now that our "index" view is done, let's go back to the "show" template  on the "projects" controller , and let's fix the "See project backers" link.
+./app/views/projects/show.html.erb
+<<BOF LN23
+<div class="project-intro">
+	<div class="container">
+		
+		<!-- project name -->
+		<div class="row">
+			<div class="col-md-12 text-center">
+				<h2 class="project-title"><%= @project.name %></h2>
+			</div>
+		</div>
+
+		<!-- stats -->
+		<div class="row">
+			<div class="col-md-8">
+				<%= link_to image_tag(@project.image_url, alt: @project.name, width: '100%'), project_path(@project) %>
+			</div>
+			<div class="col-md-4">
+				<div class="project-mgmt">
+					<%= link_to 'Edit', edit_project_path(@project) %>
+					<%= link_to 'Delete', project_path(@project), method: :delete, data: {confirm: "Are you sure?"} %>
+				</div>
+				<%= render 'stats' %>
+				<%= link_to 'See project backers', "#", class: "btn btn-success btn-lg" %>
+				<%= link_to 'See project backers', project_pledges_path(@project), class: "btn btn-success btn-lg" %>
+				<%= link_to 'Back this project', new_project_pledge_path(@project), class: "btn btn-success btn-lg" %>
+				<p class="project-time">This project will expire in 3 days.</p>
+			</div>
+		</div>
+
+Step 8
+If you go back and try to see the project's backers, you'll see that the application raises an error.
+This is because our pledges and projects table don't have any relationship.
+So, before we move on, let's go to the "Project" model and let's create a new method that maps both methods.
+./app/models/project.rb
+<<EOF
+  validates :name, :short_description, :description, :image_url, :expiration_date, :goal, presence: true
+
+  def pledges
+    rewards.flat_map(&:pledges)
+  end
+
+end
+
+Step 9
+Also, we need to add the relationship between rewards and pledges in the "Reward" model.
+./app/models/reward.rb
+<<EOF
+class Reward < ActiveRecord::Base
+
+  belongs_to :project
+  has_many   :pledges
+
+  validates :description, :value, :estimated_delivery, presence: true
+  validates :value, numericality: { greater_than_or_equal_to: 0 }
+  validates :number_available, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
+  validates :estimated_delivery, date: { after: Date.today }
+
+end
+
+Step 10
+Let's start our server again and let's try to back a project.
+rails s
+
+Step 11
+As you can see, we now have a very cool "index" view, that displays all of the pledges to our project.
+For now, everyone can access this page but once we implement authorization, only the project's owner will see the pledges.
+
+
 
 #############
 31

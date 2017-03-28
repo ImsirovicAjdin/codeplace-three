@@ -4,7 +4,7 @@
 	<h2>Enter your pledge amount</h2>
 	
 	<fieldset>
-		<%= f.input :amount, placeholder: "Enter your pledge amount:", input_html { value: @reward.try(:value), required: true } %>
+		<%= f.input :amount, placeholder: "Enter your pledge amount:", input_html: { value: @reward.try(:value), required: true } %>
 	</fieldset>
 	
 	<fieldset>
