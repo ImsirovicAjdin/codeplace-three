@@ -1181,6 +1181,106 @@ git commit -m "Edit the show view"
 #############
 20
 CREATING THE REWARD MODEL
+Step 1
+As usual, let's start by generating the model.
+However, instead of adding the fields in the generator, let's do this later on the  migration file .
+rails g model Reward
+
+Step 2
+So, let's open up the migration file and let's add the necessary fields.
+We'll begin by adding a  foreign key  to reference the "projects" table, since our rewards are going to be linked to a specific project.
+Then, we'll also need:
+the reward's description;
+the reward's value;
+the shipping value;
+the number of rewards available;
+the reward's estimated delivery date.
+
+./db/migrate/[]_devise_create_rewards.rb
+class CreateRewards < ActiveRecord::Migration
+  def change
+    create_table :rewards do |t|
+
+      t.references  :project, index: true, foreign_key: true
+      t.text        :description
+      t.integer     :value
+      t.decimal     :shipping, precision: 8, scale: 2
+      t.integer     :number_available
+      t.date        :estimated_delivery
+
+      t.timestamps null: false
+...
+
+Step 3
+Now, let's establish the relationships between models.
+./app/models/reward.rb
+class Reward < ActiveRecord::Base
+  belongs_to :project
+end
+
+While a project has many rewards.
+./app/models/project.rb
+(<<EOF):
+class Project < ActiveRecord::Base
+  belongs_to :user
+  has_many :rewards
+end
+
+Step 4
+Next, let's add some validations to our "Reward" model:
+we want to make sure the reward's description,  value and estimated delivery fields are filled out;
+the reward's value has to be a number >= 0;
+the number or available rewards has to be >= 0 or nil;
+the estimated delivery date must be later than the current date.
+./app/models/reward.rb
+    class Reward < ActiveRecord::Base
+    
+      belongs_to :project
+    
+      validates :description, :value, :estimated_delivery, presence: true
+      validates :value, numericality: { greater_than_or_equal_to: 0 }
+      validates :number_available, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
+      validates :estimated_delivery, date: { after: Date.today }
+    
+    end
+    
+Step 5
+As you've probably noticed, we're using a helper  to validate the date.
+We're doing this with the help of a gem  called 'date_validator'.
+ Please visit the gem's github official repository (https://github.com/codegram/date_validator) for more info.
+So, let's add this gem to our Gemfile .
+
+# Date Validator
+gem 'date_validator'
+
+Step 6
+And let's install the gem.
+  bundle install
+  
+Step 7
+Let's also validate the presence for all the fields in the "Project" model.
+./app/models/project.rb
+
+  has_many :rewards
+
+  validates :name, :short_description, :description, :image_url, :expiration_date, :goal, presence: true
+
+end
+
+Step 8
+We're ready to migrate  the database.
+  rake db:migrate
+
+Step 9
+Also, let's again use the "annotates_models" gem to add some schema info to our "Reward" model.
+    >_Terminal
+    $ annotate
+    => Annotated (1): Reward
+    
+As you can see, we've annotated the "Reward" model, since the other two were already annotated.
+
+git commit -m "Create the reward model"
+
 
 #############
 21

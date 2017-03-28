@@ -16,5 +16,8 @@
 #
 
 class Project < ApplicationRecord
-    belongs_to :user
+    belongs_to  :user
+    has_many    :rewards
+    
+    validates :name, :short_descrition, :description, :image_url, :expiration_date, :goal, presence: true
 end
