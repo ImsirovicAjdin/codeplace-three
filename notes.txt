@@ -1782,12 +1782,119 @@ Finally, let's fix the logo.
       <% end  %>
     </div>
     
-
+git commit -m "Add missing link"
 
 
 #############
 27
 CREATING THE PLEDGE MODEL
+Step 1
+Let's start by generating the model.
+As usual, instead of adding the fields in the generator, let's do this later on the  migration file .
+rails g model Pledge
+
+Step 2
+Let's open up the migration file and let's add the necessary fields.
+We'll begin by adding two  foreign keys, one to reference the "users" table, and one to reference the "rewards" table, since our pledges are going to be linked to a specific user and reward.
+Then, we'll also need:
+the pledge's amount;
+the shipping costs;
+the pledge's expiration date;
+the uuid;
+the user's name, address, city, country and postal code;
+the pledge's status.
+./db/migrate/[]_devise_create_pledges.rb
+<<BOF
+class CreatePledges < ActiveRecord::Migration
+  def change
+    create_table :pledges do |t|
+
+      t.references    :user, index: true, foreign_key: true
+      t.references    :reward, index: true, foreign_key: true
+      t.integer       :amount
+      t.decimal       :shipping
+      t.date          :expiration_date
+      t.string        :uuid
+      t.string        :name
+      t.string        :address
+      t.string        :city
+      t.string        :country
+      t.string        :postal_code
+      t.string        :status
+
+      t.timestamps
+    end
+  end
+end
+  
+Step 3
+Now, let's establish the relationships between models.
+    
+    Pledges belong to a user and to a reward.
+./app/models/pledge.rb
+class Pledge < ActiveRecord::Base
+  belongs_to :user
+  belongs_to :reward
+end
+
+Step 4
+    While users have many pledges and rewards through pledges.
+./app/models/user.rb
+<<EOF
+  has_many :projects
+  has_many :pledges
+  has_many :rewards, through: :pledges
+end
+
+Step 5
+Next, let's add some validations to our "Pledge" model.
+./app/models/pledge.rb
+<<BOF
+
+  belongs_to :reward
+
+  validates_presence_of :name, :address, :city, :country, :postal_code, :amount, :user_id
+
+end
+
+Step 6
+Also, let's define the generate_uuid private method, which we'll need down the road.
+To put it simply, this method creates a unique identifier and saves it to our database.
+We're doing this with the help of the "SecureRandom" class, which is part of Active Record's secure token implementation.
+In this case, we're using the hex method, which generates a random  hex string  with n*2 characters (16*2 in this case).
+Note that we've created a "while" cycle inside the method, which prevents duplicate ids.
+./app/models/pledge.rb
+<<EOF
+  validates_presence_of :name, :address, :city, :country, :postal_code, :amount, :user_id
+  
+  private
+
+  def generate_uuid!
+    begin
+      self.uuid = SecureRandom.hex(16)      
+    end while Pledge.find_by(:uuid => self.uuid).present?
+  end
+end
+
+Step 7
+We're going to invoke this method with a  before_validation  on the "create" action.
+./app/models/pledge.rb
+<<BOF
+class Pledge < ActiveRecord::Base
+  belongs_to :user
+  belongs_to :reward
+
+  before_validation     :generate_uuid!, :on => :create
+  validates_presence_of...
+
+Step 8
+We're ready to  migrate  the database.
+
+rake db:migrate
+
+git commit -m "Create the pledge model"
+
+
 
 #############
 28
