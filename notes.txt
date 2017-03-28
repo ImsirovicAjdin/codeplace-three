@@ -933,6 +933,76 @@ Also, as you can see, the carousel is correctly displaying both of our project i
 #############
 18
 UPDATING AND DELETING PROJECTS
+Step 1
+The first thing we're going to need is a template for the "update" action. 
+touch app/views/projects/edit.html.erb
+
+Step 2
+This file is going to be very simple, since we're going to render the form we've already created.
+Below that, we're going to add 2 links, one to the project's info page ("show view") and one back to the landing page (projects_path).
+./app/views/projects/edit.html.erb
+    <div class="container">
+    	<h1>Editing Project</h1>
+    	<%= render 'form' %>
+    
+    	<%= link_to 'Show', @project %>
+    	<%= link_to 'Back', projects_path %>
+    </div>
+
+Step 3
+Next, let's create the "update" action inside our controller.
+The code is basically the same as in the "create" action, we just need to alter the if statement:
+if the project is updated with the correct parameters, redirect the user to the project's info page ("show" view) and display a success message;
+if not, show the current view.
+./app/controllers/projects_controller.rb
+...
+    end
+  
+    def update
+      respond_to do |format|
+        if @project.update(project_params)
+          format.html { redirect_to @project, notice: "Project was successfully updated" }
+          format.json { render :show, status: :ok, location: @project }
+        else
+          format.html { render :edit }
+          format.json { render json: @project.errors, status: :unprocessable_entity }
+        end
+      end
+    end
+  
+    private
+...
+
+Step 4
+Let's go back to our application and let's try to edit the project we've created, which is the 2nd in our database.
+So, let's go straight to the following link: http://localhost:3000/projects/2/edit.
+As you can see, everything seems to be in order, all our data is there.
+
+Step 5
+Let's try to change something, like the goal.
+
+Step 6
+If you click on the "Update Project" button, you won't be able to see anything, since the "show" template is still blank.
+But going back to the "edit" view, you can see that our goal is now updated.
+
+Step 7
+The only thing we need to do in order to delete a project is to configure the  "destroy" action  inside our controller.
+This one is a little simpler than the rest, we only need to destroy the entry and redirect the user to the landing page. 
+./app/controllers/projects_controller.rb
+....
+  end
+
+  def destroy
+    @project.destroy
+    respond_to do |format|
+      format.html { redirect_to project_path, notice: "Project was successfully destroyed" }
+      format.json { head :no_content }      
+    end
+  end
+
+  private
+....
+git commit -m "Add the update and delete projects functionality"
 
 #############
 19
