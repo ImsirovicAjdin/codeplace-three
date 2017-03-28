@@ -1472,6 +1472,82 @@ git commit -m "Build New Reward form"
 #############
 23
 CREATING NEW REWARDS
+Step 1
+Let's go to the "rewards" controller and let's add the  "create" action .
+Just as we did before, we're going to define an if/else statement that's either going to save the reward and display a success message, or it's going to display the "new" template.
+Also, note that we've added the "reward_params"  private method  below, that sends the reward's parameters as arguments to the "create" action.
+./app/controllers/rewards_controller.rb
+
+class RewardsController < ApplicationController
+
+  before_action :authenticate_user!
+  before_action :set_project
+
+  def new
+    @reward = @project.rewards.build
+    respond_to do |format|
+      format.html 
+    end
+  end
+  # this is NEW (create method)
+  def create
+    @reward = @project.rewards.build(reward_params)
+    respond_to do |format|
+      if @reward.save
+        format.html { redirect_to @project, notice: "Reward was successfully created" }
+      else
+        format.html { render :new } 
+      end
+    end
+  end
+
+  private
+
+    def set_project
+      @project = Project.find(params[:project_id])
+    end
+    # this is NEW (reward_params to be passed as args to the create method) 
+    def reward_params
+      params.require(:reward).permit(:name, :description, :value, :shipping, :number_available, :estimated_delivery)
+    end
+
+end
+
+Step 2
+Let's refresh the page and let's fill out the form, to create a test reward.
+Step 3
+If you submit the form and take a loot at your terminal, you should be able to see something like this:
+      Started POST "/projects/2/rewards" for ::1 at 2015-12-16 09:41:32 +0000
+      Processing by RewardsController#create as HTML
+        Parameters: {"utf8"=>"✓", "authenticity_token"=>"OZ0aV1lpZm8MMiMv8gx9Qx0CYk8jHe2FaxtZbTeG6U6erx43H/ykbw5OgJ5WzMeZClTokP2nR3GOFyXqn06hfw==", "reward"=>{"description"=>"This is a new reward.", "value"=>"100", "shipping"=>"25", "number_available"=>"50", "estimated_delivery"=>"17/12/2015"}, "commit"=>"Create Reward", "project_id"=>"2"}
+        User Load (0.1ms)  SELECT  "users".* FROM "users" WHERE "users"."id" = ?  ORDER BY "users"."id" ASC LIMIT 1  [["id", 2]]
+        Project Load (0.1ms)  SELECT  "projects".* FROM "projects" WHERE "projects"."id" = ? LIMIT 1  [["id", 2]]
+         (0.1ms)  begin transaction
+        SQL (1.3ms)  INSERT INTO "rewards" ("description", "value", "shipping", "number_available", "estimated_delivery", "project_id", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?)  [["description", "This is a new reward."], ["value", 100], ["shipping", 25.0], ["number_available", 50], ["estimated_delivery", "2015-12-17"], ["project_id", 2], ["created_at", "2015-12-16 09:41:32.050954"], ["updated_at", "2015-12-16 09:41:32.050954"]]
+         (2.7ms)  commit transaction
+      Redirected to http://localhost:3000/projects/2
+      Completed 302 Found in 11ms (ActiveRecord: 4.3ms)
+As you can see on the last few lines, we've inserted a new entry on the "rewards" table and we were redirected to the project's "show" template (http://localhost:3000/projects/2).
+
+Step 4
+Let's double check by checking our table.
+So, let's go to the console .
+
+rails c
+
+Step 5
+Next, let's see if our database has any rewards associated with our first project.
+p = Project.first
+      Project Load (0.2ms)  SELECT  "projects"...
+p.rewards
+      Reward Load (0.2ms)  SELECT "rewards".* FRO...
+As you can see, everything seems to be OK.
+We now have a completely functional  "create" action .
+
+git commit -m "Creating new rewards"
+
+
+
 
 #############
 24
