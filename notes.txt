@@ -733,6 +733,127 @@ git commit -m "Add dynamic projects"
 #############
 16
 NEW PROJECT FORM
+Step 1
+Let's start by creating the routing for our projects.
+config/routes.rb
+    Rails.application.routes.draw do
+      root 'projects#index'
+      devise_for :users
+      resources :projects
+      # The priority is based upon order of creation: first created -> highest priority.
+      # See how all your routes lay out with "rake routes".
+Step 2
+Next, inside the "projects" controller , let's add all the actions we still haven't created, and let's start by defining the "new" action.
+Also, let's create a before_action  that will prevent users from accessing the "projects" controller when they're not logged in, with the exception of the "index" and "show" actions. This means that non-signed in users will still be able to see the landing page and the project info page.
+    class ProjectsController < ApplicationController
+        before_action :authenticate_user!, except: [:index, :show]
+        def index
+            @projects = Project.all
+            @displayed_projects = Project.take(4)
+        end
+        
+        def show
+        end
+        
+        def new
+            @project = Project.new
+        end
+        
+        def edit
+        end
+    
+    end
+    
+Step 3
+As you can probably guess, we're going to need a template for the "new" action.
+    touch app/views/projects/new.html.erb
+Step 4
+Inside this file, we're going to render a partial with a form that will allow users to create new projects.
+    <div class="container">
+    	<h1>Create a new Project</h1>
+    	<%= render 'form' %>
+    </div>
+Step 5
+Since we're going to need a form, let's use a very helpful gem called "simple_form".
+ Please visit the gem's official github repository (https://github.com/plataformatec/simple_form) for more info.
+As always, let's begin by adding the gem to the Gemfile .
+    
+    # Simple Form
+    gem 'simple_form'
+
+Step 6
+We need to install the gem.
+    bundle install
+
+Step 7
+Finally, let's run the generator with a Bootstrap option, so our forms use Bootstrap's styles.
+    rails generate simple_form:install --bootstrap
+
+Step 8
+Next, let's create the "form" partial.
+    touch app/views/projects/_form.html.erb
+
+Step 9
+Take a look at the code highlighted below.
+As you can see, inside our new form, we haven't specified the input type, just the input field's name. One of the very cool things about "simple_form" is that it infers the type of input it must provide.
+The exception, in this case, is the "description" field, which we've specified as a "wisyhtml5" - this is a very cool WYSIWYG gem we're going to install in the next step.
+./app/views/projects/_form.html.erb
+    <%= simple_form_for(@project, html: { class: 'form-horizontal' }) do |f| %>
+    	<%= f.input :name %>
+    	<%= f.input :short_description %>
+    	<%= f.input :description, as: :wysihtml5 %>
+    	<%= f.input :goal %>
+    	<%= f.input :image_url %>
+    	<div class="actions">
+    		<%= f.button :submit %>
+    	</div>
+    <% end %>
+
+Step 10
+So, let's install the "bootstrap-wysihtml5-rails" gem.
+Again, let's add the gem to the Gemfile .
+Please visit the gem's github official repository (https://github.com/Nerian/bootstrap-wysihtml5-rails) for more info.
+
+    # Wysiwyg Bootstrap
+    gem 'bootstrap-wysihtml5-rails', github: 'nerian/bootstrap-wysihtml5-rails'
+    
+
+Step 11
+And let's run the  bundle install  command.
+    bundle install
+    
+Step 12
+Since we're using Sass, we need to import the following line on the  application.scss  file.
+./app/assets/stylesheets/application.scss
+    // "bootstrap-sprockets" must be imported before "bootstrap" and "bootstrap/variables"
+    @import "font-awesome";
+    @import "bootstrap-sprockets";
+    @import "bootstrap";
+    
+    // sass files
+    @import "header";
+    @import "landing";
+    @import "projects";
+    @import "settings";
+    @import "variables";
+    // THIS HERE: *****************
+    // wysiwyg bootstrap
+    @import "bootstrap-wysihtml5/bootstrap3-wysihtml5";
+
+Step 13
+Next, we need to require bootstrap-wysihtml5 inside the  application.js  file.
+./app/assets/js/application.js
+    ....
+    //= require turbolinks
+    //= require bootstrap-sprockets
+    //= require bootstrap-wysihtml5
+    //= require_tree .
+Step 14
+So, let's start the server to see what our form looks like.
+    rails s
+    
+Step 15
+If go to the new project path (<ws>/projects/new) you'll see that our "new project" form is already looking awesome
 
 #############
 17
